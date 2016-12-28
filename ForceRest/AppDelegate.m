@@ -40,9 +40,15 @@ CGContextRef ctx;
 }
 
 - (void) receiveSleep {
+    if (state == 1) {
+        [self gotoWork];
+    }
     [timer invalidate];
 }
 - (void) receiveWake {
+    if (state == 1) {
+        [self gotoWork];
+    }
     [self startTimer];
 }
 
