@@ -66,9 +66,7 @@ CGContextRef ctx;
     NSDate *localDate = [date  dateByAddingTimeInterval: interval];
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *components = [calendar components:(NSCalendarUnitHour | NSCalendarUnitMinute) fromDate:localDate];
-    NSInteger minute = [components minute];
-    NSLog(@"%ld", (long)minute);
-    
+    NSInteger minute = [components minute];    
     if (minute == 0) {
         restSeconds = 180;
         [self gotoRest];
