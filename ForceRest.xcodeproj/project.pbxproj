@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		19003BA21E13A00700A6E112 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 19003BA11E13A00700A6E112 /* AppDelegate.m */; };
 		19003BA51E13A00700A6E112 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 19003BA41E13A00700A6E112 /* main.m */; };
-		19003BA71E13A00700A6E112 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 19003BA61E13A00700A6E112 /* Assets.xcassets */; };
 		19003BAA1E13A00700A6E112 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19003BA81E13A00700A6E112 /* MainMenu.xib */; };
+		19003BB21E13A44900A6E112 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 19003BB11E13A44900A6E112 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -18,9 +18,9 @@
 		19003BA01E13A00700A6E112 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		19003BA11E13A00700A6E112 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		19003BA41E13A00700A6E112 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		19003BA61E13A00700A6E112 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		19003BA91E13A00700A6E112 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		19003BAB1E13A00700A6E112 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		19003BB11E13A44900A6E112 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,9 +53,9 @@
 		19003B9F1E13A00700A6E112 /* ForceRest */ = {
 			isa = PBXGroup;
 			children = (
+				19003BB11E13A44900A6E112 /* Assets.xcassets */,
 				19003BA01E13A00700A6E112 /* AppDelegate.h */,
 				19003BA11E13A00700A6E112 /* AppDelegate.m */,
-				19003BA61E13A00700A6E112 /* Assets.xcassets */,
 				19003BA81E13A00700A6E112 /* MainMenu.xib */,
 				19003BAB1E13A00700A6E112 /* Info.plist */,
 				19003BA31E13A00700A6E112 /* Supporting Files */,
@@ -129,7 +129,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				19003BA71E13A00700A6E112 /* Assets.xcassets in Resources */,
+				19003BB21E13A44900A6E112 /* Assets.xcassets in Resources */,
 				19003BAA1E13A00700A6E112 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
