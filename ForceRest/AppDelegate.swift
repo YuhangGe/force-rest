@@ -39,8 +39,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         startTimer()
         
 //        gotoRest()
-//        updateRest(5)
-//        state = .resting(secondsRemaining: 5)
+//        updateRest(150)
+//        state = .resting(secondsRemaining: 150)
 //        updateRest(3)
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
 //            self?.updateRest(1)
@@ -161,8 +161,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 //        ctx.setShadow(offset: .zero, blur: 1, color: CGColor(red: 1, green: 1, blue: 1, alpha: 1))
 
         // System fonts
-        let hintFont = CTFontCreateUIFontForLanguage(.system, 27, nil)
-        let countdownFont = NSFont.monospacedSystemFont(ofSize: 75, weight: .regular)
+        let hintFont = CTFontCreateUIFontForLanguage(.system, 26, nil)
+        let countdownFont = CTFontCreateUIFontForLanguage(.system, 76, nil)
 
         // Build attributed strings
         let hintAttrs: [CFString: Any] = [
@@ -170,42 +170,71 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             kCTForegroundColorFromContextAttributeName: true,
         ]
         let countdownAttrs: [CFString: Any] = [
-            kCTFontAttributeName: countdownFont,
+            kCTFontAttributeName: countdownFont!,
             kCTForegroundColorFromContextAttributeName: true,
         ]
-        guard let hintAttrStr = CFAttributedStringCreate(nil, hintText as CFString, hintAttrs as CFDictionary),
-              let countdownAttrStr = CFAttributedStringCreate(nil, countdownText as CFString, countdownAttrs as CFDictionary)
+        guard let hintAttrStr = CFAttributedStringCreate(nil, hintText as CFString, hintAttrs as CFDictionary)
         else { return }
 
         let hintLine = CTLineCreateWithAttributedString(hintAttrStr)
-        let countdownLine = CTLineCreateWithAttributedString(countdownAttrStr)
 
-        // Measure typographic bounds
+        // Measure hint typographic bounds
         var hintAscent: CGFloat = 0, hintDescent: CGFloat = 0, hintLeading: CGFloat = 0
         let hintWidth = CTLineGetTypographicBounds(hintLine, &hintAscent, &hintDescent, &hintLeading)
 
-        var cdAscent: CGFloat = 0, cdDescent: CGFloat = 0, cdLeading: CGFloat = 0
-        let cdWidth = CTLineGetTypographicBounds(countdownLine, &cdAscent, &cdDescent, &cdLeading)
+        // Countdown format is always "MM:SS" — exactly 5 characters.
+        let charCount = 5
+        var charLines: [CTLine] = []
+        charLines.reserveCapacity(charCount)
+        var charWidths = [CGFloat](repeating: 0, count: charCount)
+        var charAscents = [CGFloat](repeating: 0, count: charCount)
+        var charDescents = [CGFloat](repeating: 0, count: charCount)
 
-        // Position at bottom-right corner
-        let padding: CGFloat = 80
-        let gap: CGFloat = 0
-        let cdY = padding + cdDescent
-        let hintY = cdY + cdAscent + gap + hintDescent
+        for (i, ch) in countdownText.enumerated() {
+            guard let attrStr = CFAttributedStringCreate(nil, String(ch) as CFString, countdownAttrs as CFDictionary)
+            else { return }
+            let line = CTLineCreateWithAttributedString(attrStr)
+            charLines.append(line)
+            var ascent: CGFloat = 0, descent: CGFloat = 0, leading: CGFloat = 0
+            charWidths[i] = CTLineGetTypographicBounds(line, &ascent, &descent, &leading)
+            charAscents[i] = ascent
+            charDescents[i] = descent
+        }
+        
+        // ── Layout ──────────────────────────────────────────────
+        // Anchors are px from bottom-right corner; tweak freely.
+        let anchorX = screenSize.width - 200
+        let anchorY: CGFloat = 136
+        let digitSlotWidth: CGFloat = 48   // spacing between adjacent digits
+        let colonGap: CGFloat = 40         // spacing between colon and adjacent digit
 
-        // Draw first line (hint), right-aligned (round to pixel)
+        // Hint: center-aligned at (screenWidth-200, 100)
+        let hintVisualCenterY: CGFloat = 200
+        let hintBaselineY = hintVisualCenterY - (hintAscent - hintDescent) / 2
         ctx.textPosition = CGPoint(
-            x: (screenSize.width - hintWidth - padding).rounded(),
-            y: hintY.rounded()
+            x: (anchorX - hintWidth / 2).rounded(),
+            y: hintBaselineY.rounded()
         )
         CTLineDraw(hintLine, ctx)
 
-        // Draw second line (countdown), right-aligned (round to pixel)
-        ctx.textPosition = CGPoint(
-            x: (screenSize.width - cdWidth - padding).rounded(),
-            y: cdY.rounded()
-        )
-        CTLineDraw(countdownLine, ctx)
+        // Countdown: colon at anchor, digits left/right with separate gaps
+        for (i, line) in charLines.enumerated() {
+            let slotCenterX: CGFloat
+            if i == 2 {
+                slotCenterX = anchorX
+            } else if i < 2 {
+                slotCenterX = anchorX - colonGap - CGFloat(1 - i) * digitSlotWidth
+            } else {
+                slotCenterX = anchorX + colonGap + CGFloat(i - 3) * digitSlotWidth
+            }
+            let charX = slotCenterX - charWidths[i] / 2
+            // Center each character vertically on anchorY; nudge colon up
+            let colonNudge: CGFloat = i == 2 ? 7 : 0
+            let visualCenterOffset = (charAscents[i] - charDescents[i]) / 2
+            let charY = anchorY - visualCenterOffset + colonNudge
+            ctx.textPosition = CGPoint(x: charX.rounded(), y: charY.rounded())
+            CTLineDraw(line, ctx)
+        }
 
         ctx.flush()
     }
